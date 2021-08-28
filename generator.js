@@ -1,16 +1,7 @@
-const spacingTypes = [
-  { cssProperty: 'padding', abbreviation: 'p' },
-  { cssProperty: 'margin', abbreviation: 'm' },
-];
+import * as fs from 'fs';
+import { config } from './config.js';
 
-const modifiers = [
-  { cssProperty: 'top', abbreviation: 't' },
-  { cssProperty: 'bottom', abbreviation: 'b' },
-  { cssProperty: 'left', abbreviation: 'l' },
-  { cssProperty: 'right', abbreviation: 'r' },
-];
-
-const maxRem = 10;
+const { filename, units, maxUnit, spacingTypes, modifiers } = config;
 
 const handleDecimal = (value) => {
   return value % 1 !== 0 ? `${value}`.split('.').join('\\.') : value;
@@ -22,14 +13,14 @@ const formatString = (spacingType, modifier, value) => {
   }-${handleDecimal(value)} \{
   ${spacingType.cssProperty}-${
     modifier.cssProperty
-  }: ${value}rem !important;\n\}\n`;
+  }: ${value}${units} !important;\n\}\n`;
 };
 
-const generateCSS = (spacingType, modifiers, maxRem) => {
+const generateCSS = (spacingType, modifiers, maxUnit) => {
   let generatedCSS = '';
 
   modifiers.forEach((modifier) => {
-    for (let i = 0; i <= maxRem; i += 0.25) {
+    for (let i = 0; i <= maxUnit; i += 0.25) {
       generatedCSS += formatString(spacingType, modifier, i);
     }
   });
@@ -37,8 +28,13 @@ const generateCSS = (spacingType, modifiers, maxRem) => {
   return generatedCSS;
 };
 
-let generatedCSS = spacingTypes.reduce((type) =>
-  generateCSS(type, modifiers, maxRem)
+const generatedCSS = spacingTypes.reduce((type) =>
+  generateCSS(type, modifiers, maxUnit)
 );
 
-console.log(generatedCSS);
+fs.writeFile(filename, generatedCSS, (err) => {
+  if (err) console.log(err);
+  else {
+    console.log('File written successfully\n');
+  }
+});
