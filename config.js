@@ -2,6 +2,7 @@ export const config = {
   filename: '_spacing.scss',
   units: 'rem',
   maxUnit: 10,
+  step: 0.5,
   spacingTypes: [
     { cssProperty: 'padding', abbreviation: 'p' },
     { cssProperty: 'margin', abbreviation: 'm' },
